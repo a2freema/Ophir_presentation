@@ -30,61 +30,118 @@ class: center, middle, inverse, title-slide
 ## and other important thing about data management
 ### Angela Freeman
 ### Ophir Lab
-### 2020/6/25 (updated: 2020-06-25)
+### 2020/6/25 (updated: 2020-06-26)
 
 ---
 
 
-background-image: url(https://upload.wikimedia.org/wikipedia/commons/b/be/Sharingan_triple.svg)
 
 
+class: inverse, center, middle
 
-???
-
-Image credit: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Sharingan_triple.svg)
+# The importance of reproducibility
 
 ---
-class: center, middle
 
-# xaringan
+# Does this seem familiar?
 
-### /ʃaː.'riŋ.ɡan/
+https://www.youtube.com/watch?v=s3JldKoA0zw
+
+--
+
+## Why you should use Rmarkdown and Git
+
+- have a clear record of changes (**Version control with Git**)  
+
+- changes in your data or approach are automatically imported (**Reproducible with Rmarkdown**)  
+
+- but HOW? (**I will show you, in brief**)
+
+---
+
+# What are the issues in data management specific to our field?
+
+- Keeping good records  
+
+- Finding and fixing errors  
+
+- Maintaining consistency when personnel changes  
 
 ---
 class: inverse, center, middle
-
-# Get Started
+## #1: Keeping good records
 
 ---
 
-# Hello World
+&lt;img src="twitter_names.PNG" width="500" height = "400" /&gt;
 
-Install the **xaringan** package from [Github](https://github.com/yihui/xaringan):
+---
+
+Please don't do this (finalfinalfinal.doc). If you are using box as a repository here is a suggestion:
+1. Work locally (on your desktop) and upload every few hours or every day your edits.
+(If you do this, BOX will have a record of your changes going back ~100-300 versions). If you work on the cloud version, it saves every 5-10 minutes, which means that if you are working on a large document that takes a long time, and you need to revisit something from 2 weeks ago, that version might not exist anymore.
+
+2. Set reasonable scheduled times to go through your files and do housekeeping of anything that doesn't need to exist anymore. It might have made sense to have a few versions on your local harddrive while doing edits with another person, but once the paper is out or you've moved on to a new step, delete those additional files. Don't be a person who leaves their data files named 'analyzethis.xls'  
+
+3. If you're using word and it crashes, after you save your recovered version, delete the other version.
 
 
-```r
-devtools::install_github("yihui/xaringan")
-```
+---
 
---
+## A recommendation
 
-You are recommended to use the [RStudio IDE](https://www.rstudio.com/products/rstudio/), but you do not have to.
+Consider doing this for your files:
+IN ONE FOLDER NAMED FOR THE PROJECT
 
-- Create a new R Markdown document from the menu `File -&gt; New File -&gt; R Markdown -&gt; From Template -&gt; Ninja Presentation`;&lt;sup&gt;1&lt;/sup&gt;
+/readme &lt;-- a readme file that has information about the files themselves. If something needs to be done first, or data need to be inputted in a special way, note it here  
 
---
+/analysis.R &lt;-- a master script. For most of us, one script is probably enough, though in bioinformatics, you might have several processes that need to run sequentially.  
 
-- Click the `Knit` button to compile it;
+/data-raw/ &lt;-- folder with raw files (i.e. downloaded from noldus)  
 
---
+/data/ &lt;-- 'clean' data after script processing  
 
-- or use the [RStudio Addin](https://rstudio.github.io/rstudioaddins/)&lt;sup&gt;2&lt;/sup&gt; "Infinite Moon Reader" to live preview the slides (every time you update and save the Rmd document, the slides will be automatically reloaded in RStudio Viewer.
+/R/ &lt;-- specialty functions  
 
-.footnote[
-[1] 中文用户请看[这份教程](http://slides.yihui.org/xaringan/zh-CN.html)
+/doc/ &lt;-- manuscripts  
 
-[2] See [#2](https://github.com/yihui/xaringan/issues/2) if you do not see the template or addin in RStudio.
-]
+/figs/ &lt;-- final figures if they need separate submission  
+
+/output/ &lt;-- any other code outputs that might need to be kept
+
+*You might also include in the readme where data are stored (videos, audio, project files, extrabrains) including how they are labelled. If your data are stored in a repository like the OSF, you won't need to have a data/ folder*
+
+---
+
+
+# What is Git and Github?
+
+## It is version control for your code.
+
+- I learned how to do version control with git via this site: https://happygitwithr.com/  
+
+&lt;img src="https://github.blog/wp-content/uploads/2015/11/2b38e278-8c46-11e5-8a25-06aa80342ad1.png?fit=2680%2C1720" width="600" height = "400" /&gt;
+
+
+---
+
+
+class: inverse, center, middle
+## #2: Finding and Fixing Errors
+
+---
+
+# Let's focus on R and Rmarkdown
+
+### What is Rmarkdown?
+
+- Rmarkdown is a way to put your Rcode and written document together
+
+- it uses a system to then output to PDF, WORD, and HTML (among others)
+
+
+&lt;img src="https://bookdown.org/yihui/rmarkdown-cookbook/images/workflow.png" width="600" height = "300" /&gt;
+
 
 ---
 background-image: url(https://github.com/yihui/xaringan/releases/download/v0.0.2/karl-moustache.jpg)
@@ -334,8 +391,8 @@ library(leaflet)
 leaflet() %&gt;% addTiles() %&gt;% setView(-93.65, 42.0285, zoom = 17)
 ```
 
-<div id="htmlwidget-85834366dd59b27574f6" style="width:100%;height:432px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-85834366dd59b27574f6">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]}],"setView":[[42.0285,-93.65],17,[]]},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-b36870f3730d5ac55c27" style="width:100%;height:432px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b36870f3730d5ac55c27">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]}],"setView":[[42.0285,-93.65],17,[]]},"evals":[],"jsHooks":[]}</script>
 
 ---
 
@@ -347,8 +404,8 @@ DT::datatable(
 )
 ```
 
-<div id="htmlwidget-1aa685db6a406d2b0a4d" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1aa685db6a406d2b0a4d">{"x":{"filter":"none","fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10"],[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9],[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1],[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5],[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1],["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sepal.Length<\/th>\n      <th>Sepal.Width<\/th>\n      <th>Petal.Length<\/th>\n      <th>Petal.Width<\/th>\n      <th>Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":8,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[8,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-46878306ada1a78d9f49" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-46878306ada1a78d9f49">{"x":{"filter":"none","fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10"],[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9],[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1],[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5],[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1],["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sepal.Length<\/th>\n      <th>Sepal.Width<\/th>\n      <th>Petal.Length<\/th>\n      <th>Petal.Width<\/th>\n      <th>Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":8,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[8,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 
 ---
 
@@ -739,6 +796,13 @@ class: center, middle
 Slides created via the R package [**xaringan**](https://github.com/yihui/xaringan).
 
 The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.org/knitr), and [R Markdown](https://rmarkdown.rstudio.com).
+
+
+class: center, middle
+
+# xaringan
+
+---
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
