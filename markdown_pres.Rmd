@@ -14,57 +14,115 @@ output:
       countIncrementalSlides: false
 ---
 
-background-image: url(https://upload.wikimedia.org/wikipedia/commons/b/be/Sharingan_triple.svg)
-
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
 ```
 
-???
+class: inverse, center, middle
 
-Image credit: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Sharingan_triple.svg)
+# The importance of reproducibility
 
 ---
-class: center, middle
 
-# xaringan
+# Does this seem familiar?
 
-### /ʃaː.'riŋ.ɡan/
+https://www.youtube.com/watch?v=s3JldKoA0zw
+
+--
+
+## Why you should use Rmarkdown and Git
+
+- have a clear record of changes (**Version control with Git**)  
+
+- changes in your data or approach are automatically imported (**Reproducible with Rmarkdown**)  
+
+- but HOW? (**I will show you, in brief**)
+
+---
+
+# What are the issues in data management specific to our field?
+
+- Keeping good records  
+
+- Finding and fixing errors  
+
+- Maintaining consistency when personnel changes  
 
 ---
 class: inverse, center, middle
-
-# Get Started
+## #1: Keeping good records
 
 ---
 
-# Hello World
+<img src="twitter_names.PNG" width="500" height = "400" />
 
-Install the **xaringan** package from [Github](https://github.com/yihui/xaringan):
+---
 
-```{r eval=FALSE, tidy=FALSE}
-devtools::install_github("yihui/xaringan")
-```
+Please don't do this (finalfinalfinal.doc). If you are using box as a repository here is a suggestion:
+1. Work locally (on your desktop) and upload every few hours or every day your edits.
+(If you do this, BOX will have a record of your changes going back ~100-300 versions). If you work on the cloud version, it saves every 5-10 minutes, which means that if you are working on a large document that takes a long time, and you need to revisit something from 2 weeks ago, that version might not exist anymore.
 
---
+2. Set reasonable scheduled times to go through your files and do housekeeping of anything that doesn't need to exist anymore. It might have made sense to have a few versions on your local harddrive while doing edits with another person, but once the paper is out or you've moved on to a new step, delete those additional files. Don't be a person who leaves their data files named 'analyzethis.xls'  
 
-You are recommended to use the [RStudio IDE](https://www.rstudio.com/products/rstudio/), but you do not have to.
+3. If you're using word and it crashes, after you save your recovered version, delete the other version.
 
-- Create a new R Markdown document from the menu `File -> New File -> R Markdown -> From Template -> Ninja Presentation`;<sup>1</sup>
 
---
+---
 
-- Click the `Knit` button to compile it;
+## A recommendation
 
---
+Consider doing this for your files:
+IN ONE FOLDER NAMED FOR THE PROJECT
 
-- or use the [RStudio Addin](https://rstudio.github.io/rstudioaddins/)<sup>2</sup> "Infinite Moon Reader" to live preview the slides (every time you update and save the Rmd document, the slides will be automatically reloaded in RStudio Viewer.
+/readme <-- a readme file that has information about the files themselves. If something needs to be done first, or data need to be inputted in a special way, note it here  
 
-.footnote[
-[1] 中文用户请看[这份教程](http://slides.yihui.org/xaringan/zh-CN.html)
+/analysis.R <-- a master script. For most of us, one script is probably enough, though in bioinformatics, you might have several processes that need to run sequentially.  
 
-[2] See [#2](https://github.com/yihui/xaringan/issues/2) if you do not see the template or addin in RStudio.
-]
+/data-raw/ <-- folder with raw files (i.e. downloaded from noldus)  
+
+/data/ <-- 'clean' data after script processing  
+
+/R/ <-- specialty functions  
+
+/doc/ <-- manuscripts  
+
+/figs/ <-- final figures if they need separate submission  
+
+/output/ <-- any other code outputs that might need to be kept
+
+*You might also include in the readme where data are stored (videos, audio, project files, extrabrains) including how they are labelled. If your data are stored in a repository like the OSF, you won't need to have a data/ folder*
+
+---
+
+
+# What is Git and Github?
+
+## It is version control for your code.
+
+- I learned how to do version control with git via this site: https://happygitwithr.com/  
+
+<img src="https://github.blog/wp-content/uploads/2015/11/2b38e278-8c46-11e5-8a25-06aa80342ad1.png?fit=2680%2C1720" width="600" height = "400" />
+
+
+---
+
+
+class: inverse, center, middle
+## #2: Finding and Fixing Errors
+
+---
+
+# Let's focus on R and Rmarkdown
+
+### What is Rmarkdown?
+
+- Rmarkdown is a way to put your Rcode and written document together
+
+- it uses a system to then output to PDF, WORD, and HTML (among others)
+
+
+<img src="https://bookdown.org/yihui/rmarkdown-cookbook/images/workflow.png" width="600" height = "300" />
+
 
 ---
 background-image: url(`r xaringan:::karl`)
@@ -612,3 +670,10 @@ class: center, middle
 Slides created via the R package [**xaringan**](https://github.com/yihui/xaringan).
 
 The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.org/knitr), and [R Markdown](https://rmarkdown.rstudio.com).
+
+
+class: center, middle
+
+# xaringan
+
+---
