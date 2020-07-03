@@ -1,6 +1,6 @@
 ---
 title: "Rmarkdown"
-subtitle: "and other important thing about data management"
+subtitle: "and other important things about data management"
 author: "Angela Freeman"
 institute: "Ophir Lab"
 date: "2020/6/25 (updated: `r Sys.Date()`)"
@@ -106,6 +106,29 @@ IN ONE FOLDER NAMED FOR THE PROJECT
 
 ---
 
+## What is the benefit of using Git and Github compared to just saving my code files to box?
+
+Probably you will want to upload your final files on some Cornell repository before you finish a project. 
+
+However, with RStudio (which I think most of us use, there is integration with git so you just have to click a few buttons.)
+---
+
+<img src="Push_git.PNG" width="800" height = "600" />
+
+---
+
+<img src="commit.PNG" width="800" height = "600" />
+---
+
+## Are there other features?
+
+Sure! You can share your code with others (e.g. colleagues!)
+
+They can send their own pushes to your code and it can make a new branch, or you can commit it to your 'main'.
+
+The best feature is that it's EASY. Literally just some clicky clicks in Rstudio.
+
+---
 
 class: inverse, center, middle
 ## #2: Finding and Fixing Errors
@@ -125,6 +148,13 @@ class: inverse, center, middle
 
 
 ---
+class: center, middle
+## If you find yourself frustrated at making graphs, editing graphs, then copy and pasting into word over and over and over, Rmarkdown is your answer.
+
+---
+
+
+
 background-image: url(`r xaringan:::karl`)
 background-position: 50% 50%
 class: center, bottom, inverse
