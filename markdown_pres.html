@@ -1,19 +1,12 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Rmarkdown</title>
+    <title>Statistical Analysis and Organization</title>
     <meta charset="utf-8" />
     <meta name="author" content="Angela Freeman" />
     <link href="libs/remark-css/rladies.css" rel="stylesheet" />
     <script src="libs/htmlwidgets/htmlwidgets.js"></script>
     <script src="libs/jquery/jquery.min.js"></script>
-    <link href="libs/leaflet/leaflet.css" rel="stylesheet" />
-    <script src="libs/leaflet/leaflet.js"></script>
-    <link href="libs/leafletfix/leafletfix.css" rel="stylesheet" />
-    <script src="libs/Proj4Leaflet/proj4-compressed.js"></script>
-    <script src="libs/Proj4Leaflet/proj4leaflet.js"></script>
-    <link href="libs/rstudio_leaflet/rstudio_leaflet.css" rel="stylesheet" />
-    <script src="libs/leaflet-binding/leaflet.js"></script>
     <link href="libs/datatables-css/datatables-crosstalk.css" rel="stylesheet" />
     <script src="libs/datatables-binding/datatables.js"></script>
     <link href="libs/dt-core/css/jquery.dataTables.min.css" rel="stylesheet" />
@@ -26,11 +19,11 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# Rmarkdown
-## and other important thing about data management
+# Statistical Analysis and Organization
+## and other important things about data management
 ### Angela Freeman
 ### Ophir Lab
-### 2020/6/25 (updated: 2020-06-26)
+### 2020/6/25 (updated: 2020-07-06)
 
 ---
 
@@ -41,21 +34,6 @@ class: inverse, center, middle
 
 # The importance of reproducibility
 
----
-
-# Does this seem familiar?
-
-https://www.youtube.com/watch?v=s3JldKoA0zw
-
---
-
-## Why you should use Rmarkdown and Git
-
-- have a clear record of changes (**Version control with Git**)  
-
-- changes in your data or approach are automatically imported (**Reproducible with Rmarkdown**)  
-
-- but HOW? (**I will show you, in brief**)
 
 ---
 
@@ -66,6 +44,7 @@ https://www.youtube.com/watch?v=s3JldKoA0zw
 - Finding and fixing errors  
 
 - Maintaining consistency when personnel changes  
+
 
 ---
 class: inverse, center, middle
@@ -112,7 +91,9 @@ IN ONE FOLDER NAMED FOR THE PROJECT
 *You might also include in the readme where data are stored (videos, audio, project files, extrabrains) including how they are labelled. If your data are stored in a repository like the OSF, you won't need to have a data/ folder*
 
 ---
-
+class: center, middle
+## Consider using a backup and version control for stats code
+---
 
 # What is Git and Github?
 
@@ -123,17 +104,597 @@ IN ONE FOLDER NAMED FOR THE PROJECT
 &lt;img src="https://github.blog/wp-content/uploads/2015/11/2b38e278-8c46-11e5-8a25-06aa80342ad1.png?fit=2680%2C1720" width="600" height = "400" /&gt;
 
 
+
+## What is the benefit of using Git and Github compared to just saving my code files to box?
+
+Probably you will want to upload your final files on some Cornell repository before you finish a project. 
+
+However, with RStudio (which I think most of us use, there is integration with git so you just have to click a few buttons.)
 ---
 
+&lt;img src="Push_git.PNG" width="800" height = "600" /&gt;
+
+---
+
+&lt;img src="commit.PNG" width="800" height = "600" /&gt;
+---
+
+## Are there other features?
+
+Sure! You can share your code with others (e.g. colleagues!)
+
+They can send their own pushes to your code and it can make a new branch, or you can commit it to your 'main'.
+
+The best feature is that it's EASY. Literally just some clicky clicks in Rstudio.
+
+---
+## A last word about keeping good records
+- Use a lab notebook, either paper or digital.
+    - digital can be searched, but if you are in a facility where using personal items is a no-no, keep paper records and transfer them later
+- Recommend keeping a table of contents at the start
+- You can refer then to protocols on a specific page with any chages
+- It really should be EASY to understand what was done
+- It will benefit you in the long run (and in the short run)
+- If you take paper notes, upload them to a repository (box or a server)
+    - a flash drive is an unnacceptable repository and should be treated as a ticking time bomb of data loss.
+
+
+---
+## Keeping good records summary:
+
+### Make sure your files are organized, well-labeled and backed up
+   - delete useless stuff on a regular schedule
+
+### Use a time-machine/version control (e.g. Box if you use word; Git/github for code)
+
+### Keep notes on everthing and make sure they are clear!
+---
 
 class: inverse, center, middle
 ## #2: Finding and Fixing Errors
 
 ---
+# First off, what is R?
 
-# Let's focus on R and Rmarkdown
+- a programming language that is FREE
 
-### What is Rmarkdown?
+- you can make fancy graphics
+
+- things in R are easily reproducible!!!!!!
+   - you are less likely to forget whether you ran an independent or paired t-test because you can see your script of what was run right in front of you.
+
+---
+#Example 1
+
+I can load data from a repository...
+
+
+---
+
+
+```r
+## Example, pull code from open science framework
+
+osf_retrieve_node("https://osf.io/jfg7b") %&gt;%
+    osf_ls_files() %&gt;%
+    osf_download(conflicts= "overwrite")
+```
+
+```
+## # A tibble: 4 x 4
+##   name              id                       local_path          meta           
+##   &lt;chr&gt;             &lt;chr&gt;                    &lt;chr&gt;               &lt;list&gt;         
+## 1 OLPcombined2.csv  5e8640648140b40241421ff8 ./OLPcombined2.csv  &lt;named list [3~
+## 2 selfrec.csv       5e8640678140b40240421f64 ./selfrec.csv       &lt;named list [3~
+## 3 IRR.csv           5e86406bd0e3540239b45e6d ./IRR.csv           &lt;named list [3~
+## 4 OLP_publication.R 5ec4077af3e87e005b5742f3 ./OLP_publication.R &lt;named list [3~
+```
+
+---
+
+
+```r
+olpdata &lt;-read.csv(file="OLPcombined2.csv")
+
+glimpse(olpdata)
+```
+
+```
+## Rows: 560
+## Columns: 31
+## $ ID                  &lt;int&gt; 1505679, 1505679, 1505679, 1505679, 1505679, 15...
+## $ Sex                 &lt;chr&gt; "Female", "Female", "Female", "Female", "Female...
+## $ Date                &lt;chr&gt; "11/9/2018", "11/9/2018", "11/9/2018", "11/9/20...
+## $ Trial               &lt;int&gt; 1, 2, 3, 4, 4, 1, 2, 3, 4, 4, 1, 2, 3, 4, 4, 1,...
+## $ Scent.sex           &lt;chr&gt; "F", "F", "F", "F", "F", "F", "F", "F", "F", "F...
+## $ Individual          &lt;chr&gt; "n", "n", "n", "n", "n", "y", "y", "y", "y", "y...
+## $ Experiment.Type     &lt;chr&gt; "FFhabdiscrim", "FFhabdiscrim", "FFhabdiscrim",...
+## $ Sniff.Duration      &lt;dbl&gt; 0.00, 0.00, 0.00, 0.00, 0.82, 0.00, 0.00, 10.29...
+## $ Side.Duration       &lt;dbl&gt; 199.93, 149.50, 2.69, 298.03, 2.54, 297.59, 0.0...
+## $ Sniff.Freq          &lt;int&gt; 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,...
+## $ Side.Freq           &lt;int&gt; 1, 4, 1, 1, 1, 1, 0, 2, 0, 1, 1, 1, 3, 1, 0, 2,...
+## $ Familiar.Novel      &lt;chr&gt; "Familiar", "Familiar", "Familiar", "Familiar",...
+## $ DonorID             &lt;int&gt; 1506677, 1506677, 1506677, 1506677, 1511027, 15...
+## $ DonorAGD            &lt;dbl&gt; 2.9, 2.9, 2.9, 2.9, 3.5, 3.4, 3.4, 3.4, 3.4, 3....
+## $ Sniff.Duration.1    &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0.00, 0...
+## $ Side.Duration.1     &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 8.64, 3...
+## $ Sniff.Freq.1        &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, 0...
+## $ Side.Freq.1         &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, 1, 3...
+## $ Familiar.Novel.1    &lt;chr&gt; "Familiar", "Familiar", "Familiar", "Familiar",...
+## $ Sniff.Duration.MEAN &lt;dbl&gt; 0.00, 0.00, 0.00, 0.00, 0.82, 0.00, 0.00, 10.29...
+## $ Sniff.Duration.SD   &lt;chr&gt; "#DIV/0!", "#DIV/0!", "#DIV/0!", "#DIV/0!", "#D...
+## $ Side.Duration.MEAN  &lt;dbl&gt; 199.93, 149.50, 2.69, 298.03, 2.54, 297.59, 0.0...
+## $ Side.Duration.SD    &lt;chr&gt; "#DIV/0!", "#DIV/0!", "#DIV/0!", "#DIV/0!", "#D...
+## $ Sniff.Freq.MEAN     &lt;dbl&gt; 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,...
+## $ Sniff.Freq.SD       &lt;chr&gt; "#DIV/0!", "#DIV/0!", "#DIV/0!", "#DIV/0!", "#D...
+## $ Side.Freq.MEAN      &lt;dbl&gt; 1, 4, 1, 1, 1, 1, 0, 2, 0, 1, 1, 1, 3, 1, 0, 2,...
+## $ Side.Freq.SD        &lt;chr&gt; "#DIV/0!", "#DIV/0!", "#DIV/0!", "#DIV/0!", "#D...
+## $ Familiar.Novel.2    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,...
+## $ X                   &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", "", "",...
+## $ Differencesniff     &lt;dbl&gt; NA, NA, NA, NA, 0.82, NA, NA, NA, NA, 0.00, NA,...
+## $ Differenceside      &lt;dbl&gt; NA, NA, NA, NA, -295.49, NA, NA, NA, NA, 300.63...
+```
+---
+## As a reminder if you use IDs or trial/set/replicate numbers, make sure these are set as factors so that your models don't treat them as numbers. 
+
+```r
+## set ID as a factor using tidy and pipes
+data.tidy &lt;- olpdata %&gt;% mutate(
+              ID = (factor(ID)), DonorID = (factor(DonorID)), 
+              Sex = (factor(Sex)), Scent.sex = (factor(Scent.sex)),
+              Trial = (factor(Trial))
+)
+```
+
+The pipe %&gt;% basically means 'and then do'
+
+---
+
+
+```r
+glimpse(data.tidy)
+```
+
+```
+## Rows: 560
+## Columns: 31
+## $ ID                  &lt;fct&gt; 1505679, 1505679, 1505679, 1505679, 1505679, 15...
+## $ Sex                 &lt;fct&gt; Female, Female, Female, Female, Female, Female,...
+## $ Date                &lt;chr&gt; "11/9/2018", "11/9/2018", "11/9/2018", "11/9/20...
+## $ Trial               &lt;fct&gt; 1, 2, 3, 4, 4, 1, 2, 3, 4, 4, 1, 2, 3, 4, 4, 1,...
+## $ Scent.sex           &lt;fct&gt; F, F, F, F, F, F, F, F, F, F, M, M, M, M, M, M,...
+## $ Individual          &lt;chr&gt; "n", "n", "n", "n", "n", "y", "y", "y", "y", "y...
+## $ Experiment.Type     &lt;chr&gt; "FFhabdiscrim", "FFhabdiscrim", "FFhabdiscrim",...
+## $ Sniff.Duration      &lt;dbl&gt; 0.00, 0.00, 0.00, 0.00, 0.82, 0.00, 0.00, 10.29...
+## $ Side.Duration       &lt;dbl&gt; 199.93, 149.50, 2.69, 298.03, 2.54, 297.59, 0.0...
+## $ Sniff.Freq          &lt;int&gt; 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,...
+## $ Side.Freq           &lt;int&gt; 1, 4, 1, 1, 1, 1, 0, 2, 0, 1, 1, 1, 3, 1, 0, 2,...
+## $ Familiar.Novel      &lt;chr&gt; "Familiar", "Familiar", "Familiar", "Familiar",...
+## $ DonorID             &lt;fct&gt; 1506677, 1506677, 1506677, 1506677, 1511027, 15...
+## $ DonorAGD            &lt;dbl&gt; 2.9, 2.9, 2.9, 2.9, 3.5, 3.4, 3.4, 3.4, 3.4, 3....
+## $ Sniff.Duration.1    &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0.00, 0...
+## $ Side.Duration.1     &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 8.64, 3...
+## $ Sniff.Freq.1        &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, 0...
+## $ Side.Freq.1         &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, 1, 3...
+## $ Familiar.Novel.1    &lt;chr&gt; "Familiar", "Familiar", "Familiar", "Familiar",...
+## $ Sniff.Duration.MEAN &lt;dbl&gt; 0.00, 0.00, 0.00, 0.00, 0.82, 0.00, 0.00, 10.29...
+## $ Sniff.Duration.SD   &lt;chr&gt; "#DIV/0!", "#DIV/0!", "#DIV/0!", "#DIV/0!", "#D...
+## $ Side.Duration.MEAN  &lt;dbl&gt; 199.93, 149.50, 2.69, 298.03, 2.54, 297.59, 0.0...
+## $ Side.Duration.SD    &lt;chr&gt; "#DIV/0!", "#DIV/0!", "#DIV/0!", "#DIV/0!", "#D...
+## $ Sniff.Freq.MEAN     &lt;dbl&gt; 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,...
+## $ Sniff.Freq.SD       &lt;chr&gt; "#DIV/0!", "#DIV/0!", "#DIV/0!", "#DIV/0!", "#D...
+## $ Side.Freq.MEAN      &lt;dbl&gt; 1, 4, 1, 1, 1, 1, 0, 2, 0, 1, 1, 1, 3, 1, 0, 2,...
+## $ Side.Freq.SD        &lt;chr&gt; "#DIV/0!", "#DIV/0!", "#DIV/0!", "#DIV/0!", "#D...
+## $ Familiar.Novel.2    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,...
+## $ X                   &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", "", "",...
+## $ Differencesniff     &lt;dbl&gt; NA, NA, NA, NA, 0.82, NA, NA, NA, NA, 0.00, NA,...
+## $ Differenceside      &lt;dbl&gt; NA, NA, NA, NA, -295.49, NA, NA, NA, NA, 300.63...
+```
+
+---
+
+class: center, middle
+What sorts of things should I look for in my data?
+
+---
+Look to make sure that your numbers make sense.
+
+
+```r
+plot(data.tidy$Side.Duration)
+```
+
+![](markdown_pres_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+
+---
+Double check that your n's are what you expect. If you ran 14 females, you should have 14 females in your data.
+
+```r
+summary(data.tidy)
+```
+
+```
+##        ID          Sex          Date           Trial   Scent.sex
+##  1505679: 20   Female:280   Length:560         1:112   F:280    
+##  1507783: 20   Male  :280   Class :character   2:112   M:280    
+##  1507940: 20                Mode  :character   3:112            
+##  1508553: 20                                   4:224            
+##  1508745: 20                                                    
+##  1508819: 20                                                    
+##  (Other):440                                                    
+##   Individual        Experiment.Type    Sniff.Duration    Side.Duration   
+##  Length:560         Length:560         Min.   :  0.000   Min.   :  0.00  
+##  Class :character   Class :character   1st Qu.:  0.000   1st Qu.: 78.91  
+##  Mode  :character   Mode  :character   Median :  0.000   Median :149.50  
+##                                        Mean   :  3.289   Mean   :148.64  
+##                                        3rd Qu.:  1.295   3rd Qu.:215.18  
+##                                        Max.   :271.270   Max.   :300.96  
+##                                        NA's   :45        NA's   :45      
+##    Sniff.Freq       Side.Freq     Familiar.Novel        DonorID   
+##  Min.   :0.0000   Min.   : 0.00   Length:560         1511609: 51  
+##  1st Qu.:0.0000   1st Qu.: 2.00   Class :character   1508553: 36  
+##  Median :0.0000   Median : 4.00   Mode  :character   1508919: 34  
+##  Mean   :0.7922   Mean   : 8.07                      1510698: 29  
+##  3rd Qu.:1.0000   3rd Qu.:11.00                      1510299: 27  
+##  Max.   :9.0000   Max.   :52.00                      1510219: 24  
+##  NA's   :45       NA's   :45                         (Other):359  
+##     DonorAGD     Sniff.Duration.1  Side.Duration.1   Sniff.Freq.1   
+##  Min.   :2.600   Min.   :  0.000   Min.   :  0.00   Min.   :0.0000  
+##  1st Qu.:3.200   1st Qu.:  0.000   1st Qu.: 83.55   1st Qu.:0.0000  
+##  Median :3.500   Median :  0.000   Median :146.94   Median :0.0000  
+##  Mean   :4.796   Mean   :  2.838   Mean   :151.49   Mean   :0.7323  
+##  3rd Qu.:6.500   3rd Qu.:  0.550   3rd Qu.:214.31   3rd Qu.:1.0000  
+##  Max.   :7.800   Max.   :269.360   Max.   :300.00   Max.   :7.0000  
+##  NA's   :14      NA's   :291       NA's   :291      NA's   :291     
+##   Side.Freq.1     Familiar.Novel.1   Sniff.Duration.MEAN Sniff.Duration.SD 
+##  Min.   : 0.000   Length:560         Min.   :  0.000     Length:560        
+##  1st Qu.: 2.000   Class :character   1st Qu.:  0.000     Class :character  
+##  Median : 5.000   Mode  :character   Median :  0.000     Mode  :character  
+##  Mean   : 7.803                      Mean   :  3.071                       
+##  3rd Qu.:10.000                      3rd Qu.:  1.155                       
+##  Max.   :53.000                      Max.   :270.320                       
+##  NA's   :291                                                               
+##  Side.Duration.MEAN Side.Duration.SD   Sniff.Freq.MEAN  Sniff.Freq.SD     
+##  Min.   :  0.0      Length:560         Min.   :0.0000   Length:560        
+##  1st Qu.: 78.0      Class :character   1st Qu.:0.0000   Class :character  
+##  Median :150.1      Mode  :character   Median :0.0000   Mode  :character  
+##  Mean   :149.1                         Mean   :0.7946                     
+##  3rd Qu.:216.1                         3rd Qu.:1.0000                     
+##  Max.   :300.6                         Max.   :9.0000                     
+##                                                                           
+##  Side.Freq.MEAN   Side.Freq.SD       Familiar.Novel.2      X            
+##  Min.   : 0.000   Length:560         Mode:logical     Length:560        
+##  1st Qu.: 2.000   Class :character   NA's:560         Class :character  
+##  Median : 4.000   Mode  :character                    Mode  :character  
+##  Mean   : 7.904                                                         
+##  3rd Qu.:10.000                                                         
+##  Max.   :52.500                                                         
+##                                                                         
+##  Differencesniff    Differenceside   
+##  Min.   :-13.5800   Min.   :-300.40  
+##  1st Qu.: -0.1850   1st Qu.:-110.57  
+##  Median :  0.0000   Median :  16.75  
+##  Mean   :  0.6312   Mean   :  16.01  
+##  3rd Qu.:  0.7450   3rd Qu.: 151.80  
+##  Max.   : 21.8900   Max.   : 300.63  
+##  NA's   :448        NA's   :448
+```
+---
+I know that I ran 4 experiment types, and there are 5 lines of data each. So each animal should have 20 data points.
+
+
+```r
+#Check number from sex.
+280/20
+```
+
+```
+## [1] 14
+```
+
+---
+
+
+```r
+#summarize data and select discrimination trials
+sum_data &lt;- data.tidy %&gt;% filter(Trial==4) %&gt;%
+    group_by(Sex, Experiment.Type, Scent.sex, 
+             Familiar.Novel, Individual) %&gt;%
+    summarize(sniff_mean = mean(Sniff.Duration.MEAN),
+              side_mean = mean(Side.Duration.MEAN),
+              n_datapoints = n()) %&gt;%
+  ungroup()
+```
+
+```
+## `summarise()` regrouping output by 'Sex', 'Experiment.Type', 'Scent.sex', 'Familiar.Novel' (override with `.groups` argument)
+```
+
+```r
+sum_data
+```
+
+```
+## # A tibble: 16 x 8
+##    Sex   Experiment.Type Scent.sex Familiar.Novel Individual sniff_mean
+##    &lt;fct&gt; &lt;chr&gt;           &lt;fct&gt;     &lt;chr&gt;          &lt;chr&gt;           &lt;dbl&gt;
+##  1 Fema~ FFhabdiscrim    F         Familiar       n               0.538
+##  2 Fema~ FFhabdiscrim    F         Novel          n               0.887
+##  3 Fema~ FFindhabdiscrim F         Familiar       y               1.71 
+##  4 Fema~ FFindhabdiscrim F         Novel          y               1.36 
+##  5 Fema~ MMhabdiscrim    M         Familiar       n               0.883
+##  6 Fema~ MMhabdiscrim    M         Novel          n               3.59 
+##  7 Fema~ MMindhabdiscrim M         Familiar       y               1.06 
+##  8 Fema~ MMindhabdiscrim M         Novel          y               3.35 
+##  9 Male  FFhabdiscrim    F         Familiar       n               0.545
+## 10 Male  FFhabdiscrim    F         Novel          n               0.388
+## 11 Male  FFindhabdiscrim F         Familiar       y               1.18 
+## 12 Male  FFindhabdiscrim F         Novel          y               0.516
+## 13 Male  MMhabdiscrim    M         Familiar       n               0.277
+## 14 Male  MMhabdiscrim    M         Novel          n               0.781
+## 15 Male  MMindhabdiscrim M         Familiar       y               1.24 
+## 16 Male  MMindhabdiscrim M         Novel          y               1.21 
+## # ... with 2 more variables: side_mean &lt;dbl&gt;, n_datapoints &lt;int&gt;
+```
+
+---
+Or, I can use the kable function to make a nice table.
+
+
+```r
+knitr::kable(sum_data, format = "html")
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Sex &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Experiment.Type &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Scent.sex &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Familiar.Novel &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Individual &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; sniff_mean &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; side_mean &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; n_datapoints &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Female &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; FFhabdiscrim &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; F &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Familiar &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; n &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.5378571 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 122.9593 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Female &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; FFhabdiscrim &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; F &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Novel &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; n &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.8871429 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 177.3886 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Female &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; FFindhabdiscrim &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; F &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Familiar &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.7071429 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 129.7214 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Female &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; FFindhabdiscrim &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; F &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Novel &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.3557143 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 170.4164 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Female &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; MMhabdiscrim &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; M &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Familiar &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; n &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.8828571 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 142.0964 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Female &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; MMhabdiscrim &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; M &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Novel &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; n &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.5885714 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 158.1429 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Female &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; MMindhabdiscrim &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; M &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Familiar &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.0571429 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 128.4157 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Female &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; MMindhabdiscrim &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; M &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Novel &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.3528571 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 171.9414 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Male &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; FFhabdiscrim &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; F &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Familiar &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; n &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.5450000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 125.7714 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Male &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; FFhabdiscrim &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; F &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Novel &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; n &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.3878571 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 172.1286 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Male &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; FFindhabdiscrim &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; F &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Familiar &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.1757143 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 146.0750 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Male &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; FFindhabdiscrim &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; F &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Novel &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.5164286 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 143.1821 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Male &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; MMhabdiscrim &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; M &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Familiar &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; n &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.2771429 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 188.1579 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Male &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; MMhabdiscrim &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; M &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Novel &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; n &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.7814286 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 108.2986 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Male &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; MMindhabdiscrim &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; M &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Familiar &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.2428571 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 160.2486 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Male &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; MMindhabdiscrim &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; M &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Novel &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.2071429 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 138.7214 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+And for the sake of presentation, I can even use a javascript widget to show all the data in cool ways
+
+```r
+DT::datatable(
+  sum_data,
+  fillContainer = FALSE, options = list(pageLength = 8)
+)
+```
+
+<div id="htmlwidget-f08cfcd33d6acc59c3ad" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-f08cfcd33d6acc59c3ad">{"x":{"filter":"none","fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"],["Female","Female","Female","Female","Female","Female","Female","Female","Male","Male","Male","Male","Male","Male","Male","Male"],["FFhabdiscrim","FFhabdiscrim","FFindhabdiscrim","FFindhabdiscrim","MMhabdiscrim","MMhabdiscrim","MMindhabdiscrim","MMindhabdiscrim","FFhabdiscrim","FFhabdiscrim","FFindhabdiscrim","FFindhabdiscrim","MMhabdiscrim","MMhabdiscrim","MMindhabdiscrim","MMindhabdiscrim"],["F","F","F","F","M","M","M","M","F","F","F","F","M","M","M","M"],["Familiar","Novel","Familiar","Novel","Familiar","Novel","Familiar","Novel","Familiar","Novel","Familiar","Novel","Familiar","Novel","Familiar","Novel"],["n","n","y","y","n","n","y","y","n","n","y","y","n","n","y","y"],[0.537857142857143,0.887142857142857,1.70714285714286,1.35571428571429,0.882857142857143,3.58857142857143,1.05714285714286,3.35285714285714,0.545,0.387857142857143,1.17571428571429,0.516428571428571,0.277142857142857,0.781428571428571,1.24285714285714,1.20714285714286],[122.959285714286,177.388571428571,129.721428571429,170.416428571429,142.096428571429,158.142857142857,128.415714285714,171.941428571429,125.771428571429,172.128571428571,146.075,143.182142857143,188.157857142857,108.298571428571,160.248571428571,138.721428571429],[14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sex<\/th>\n      <th>Experiment.Type<\/th>\n      <th>Scent.sex<\/th>\n      <th>Familiar.Novel<\/th>\n      <th>Individual<\/th>\n      <th>sniff_mean<\/th>\n      <th>side_mean<\/th>\n      <th>n_datapoints<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":8,"columnDefs":[{"className":"dt-right","targets":[6,7,8]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[8,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+
+---
+## If you know that for example, your numbers should be positive values and they aren't = issues.
+
+- The easiest things to fix are errors in code/analysis.
+
+- The most difficult things/impossible things are human error when there are not good notes.
+    - e.g. was this animal female or male? two datasheets have differing information. How might you try to resolve this inconsistency? (Let's share!)
+
+---
+
+## Finding and Fixing errors summary:
+
+### Use reproducible analyses (R) so you can always go back and revisit EXACTLY what you did
+
+### 'Sit with your data' and check for outliers/inconsistencies in numbers/distributions
+
+### Keep notes on everthing and make sure they are clear!
+
+
+
+---
+
+class: inverse, center, middle
+## #3: Maintaining consistency
+### Most of us already use R and there are major benefits for this consistency
+
+---
+
+## What are the essential-to-knows for me, the new R user in the lab?
+
+- Learn to google your errors
+
+- If you get an error in your code check
+    - That your variables are the right type * class(x) *
+    - That you've spelled things correctly
+    - That you're in the right working directory * getwd() *
+    - Check the case (upper/lower)
+    
+- Don't reinvent the wheel, others in the lab can help you and **share scripts**
+
+- lme4 and emmeans packages will be your bffs and ggplot will be your nemesis.
+
+- consider starting with Rmarkdown off the hop, and check out the packages redoc, citr, and rticles.
+
+---
+## What are the essential-to-knows for me, a sometimes-user of R in the lab?
+
+- If you aren't using the dplyr package - check it out for data transforming 
+
+&lt;img src="dplyr.PNG" width="300" height = "250" class="center" /&gt;
+
+- Don't be afraid to make functions of things you do ALL THE TIME (e.g. standard error function) and share
+- Don't be afriad to make changes to functions in packages if it helps you science! (e.g. Alex_theme())
+- If you want it to exist, it might already exist in a package. R programmers are often found on twitter.
+
+---
+
+# Let's focus a little on R and Rmarkdown
+
+### What is Rmarkdown? How could it help our work?
 
 - Rmarkdown is a way to put your Rcode and written document together
 
@@ -144,648 +705,82 @@ class: inverse, center, middle
 
 
 ---
-background-image: url(https://github.com/yihui/xaringan/releases/download/v0.0.2/karl-moustache.jpg)
-background-position: 50% 50%
-class: center, bottom, inverse
+# How does markdown work?
 
-# You only live once!
+The 'yaml' (acronym: YAML ain't markup language) gives these parts of the workflow the information needed to make your final document when you 'knit'
 
----
-
-# Hello Ninja
-
-As a presentation ninja, you certainly should not be satisfied by the "Hello World" example. You need to understand more about two things:
-
-1. The [remark.js](https://remarkjs.com) library;
-
-1. The **xaringan** package;
-
-Basically **xaringan** injected the chakra of R Markdown (minus Pandoc) into **remark.js**. The slides are rendered by remark.js in the web browser, and the Markdown source needed by remark.js is generated from R Markdown (**knitr**).
-
----
-
-# remark.js
-
-You can see an introduction of remark.js from [its homepage](https://remarkjs.com). You should read the [remark.js Wiki](https://github.com/gnab/remark/wiki) at least once to know how to
-
-- create a new slide (Markdown syntax&lt;sup&gt;*&lt;/sup&gt; and slide properties);
-
-- format a slide (e.g. text alignment);
-
-- configure the slideshow;
-
-- and use the presentation (keyboard shortcuts).
-
-It is important to be familiar with remark.js before you can understand the options in **xaringan**.
-
-.footnote[[*] It is different with Pandoc's Markdown! It is limited but should be enough for presentation purposes. Come on... You do not need a slide for the Table of Contents! Well, the Markdown support in remark.js [may be improved](https://github.com/gnab/remark/issues/142) in the future.]
-
----
-background-image: url(https://github.com/yihui/xaringan/releases/download/v0.0.2/karl-moustache.jpg)
-background-size: cover
-class: center, bottom, inverse
-
-# I was so happy to have discovered remark.js!
-
----
-class: inverse, middle, center
-
-# Using xaringan
-
----
-
-# xaringan
-
-Provides an R Markdown output format `xaringan::moon_reader` as a wrapper for remark.js, and you can use it in the YAML metadata, e.g.
-
-```yaml
----
-title: "A Cool Presentation"
-output:
-  xaringan::moon_reader:
-    yolo: true
-    nature:
-      autoplay: 30000
----
-```
-
-See the help page `?xaringan::moon_reader` for all possible options that you can use.
-
----
-
-# remark.js vs xaringan
-
-Some differences between using remark.js (left) and using **xaringan** (right):
-
-.pull-left[
-1. Start with a boilerplate HTML file;
-
-1. Plain Markdown;
-
-1. Write JavaScript to autoplay slides;
-
-1. Manually configure MathJax;
-
-1. Highlight code with `*`;
-
-1. Edit Markdown source and refresh browser to see updated slides;
-]
-
-.pull-right[
-1. Start with an R Markdown document;
-
-1. R Markdown (can embed R/other code chunks);
-
-1. Provide an option `autoplay`;
-
-1. MathJax just works;&lt;sup&gt;*&lt;/sup&gt;
-
-1. Highlight code with `{{}}`;
-
-1. The RStudio addin "Infinite Moon Reader" automatically refreshes slides on changes;
-]
-
-.footnote[[*] Not really. See next page.]
-
----
-
-# Math Expressions
-
-You can write LaTeX math expressions inside a pair of dollar signs, e.g. &amp;#36;\alpha+\beta$ renders `\(\alpha+\beta\)`. You can use the display style with double dollar signs:
-
-```
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-```
-
-`$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$`
-
-Limitations:
-
-1. The source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting `$$` must appear in the very beginning of a line, followed immediately by a non-space character, and the ending `$$` must be at the end of a line, led by a non-space character;
-
-1. There should not be spaces after the opening `$` or before the closing `$`.
-
-1. Math does not work on the title slide (see [#61](https://github.com/yihui/xaringan/issues/61) for a workaround).
-
----
-
-# R Code
-
-
-```r
-# a boring regression
-fit = lm(dist ~ 1 + speed, data = cars)
-coef(summary(fit))
-```
-
-```
-#               Estimate Std. Error   t value     Pr(&gt;|t|)
-# (Intercept) -17.579095  6.7584402 -2.601058 1.231882e-02
-# speed         3.932409  0.4155128  9.463990 1.489836e-12
-```
-
-```r
-dojutsu = c('地爆天星', '天照', '加具土命', '神威', '須佐能乎', '無限月読')
-grep('天', dojutsu, value = TRUE)
-```
-
-```
-# character(0)
-```
-
----
-
-# R Plots
-
-
-```r
-par(mar = c(4, 4, 1, .1))
-plot(cars, pch = 19, col = 'darkgray', las = 1)
-abline(fit, lwd = 2)
-```
-
-![](markdown_pres_files/figure-html/cars-1.svg)&lt;!-- --&gt;
-
----
-
-# Tables
-
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
-
-
-```r
-knitr::kable(head(iris), format = 'html')
-```
-
-&lt;table&gt;
- &lt;thead&gt;
-  &lt;tr&gt;
-   &lt;th style="text-align:right;"&gt; Sepal.Length &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Sepal.Width &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Petal.Length &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Petal.Width &lt;/th&gt;
-   &lt;th style="text-align:left;"&gt; Species &lt;/th&gt;
-  &lt;/tr&gt;
- &lt;/thead&gt;
-&lt;tbody&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.4 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
----
-
-# HTML Widgets
-
-I have not thoroughly tested HTML widgets against **xaringan**. Some may work well, and some may not. It is a little tricky.
-
-Similarly, the Shiny mode (`runtime: shiny`) does not work. I might get these issues fixed in the future, but these are not of high priority to me. I never turn my presentation into a Shiny app. When I need to demonstrate more complicated examples, I just launch them separately. It is convenient to share slides with other people when they are plain HTML/JS applications.
-
-See the next page for two HTML widgets.
-
----
-
-
-```r
-library(leaflet)
-leaflet() %&gt;% addTiles() %&gt;% setView(-93.65, 42.0285, zoom = 17)
-```
-
-<div id="htmlwidget-b36870f3730d5ac55c27" style="width:100%;height:432px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b36870f3730d5ac55c27">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]}],"setView":[[42.0285,-93.65],17,[]]},"evals":[],"jsHooks":[]}</script>
-
----
-
-
-```r
-DT::datatable(
-  head(iris, 10),
-  fillContainer = FALSE, options = list(pageLength = 8)
-)
-```
-
-<div id="htmlwidget-46878306ada1a78d9f49" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-46878306ada1a78d9f49">{"x":{"filter":"none","fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10"],[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9],[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1],[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5],[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1],["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sepal.Length<\/th>\n      <th>Sepal.Width<\/th>\n      <th>Petal.Length<\/th>\n      <th>Petal.Width<\/th>\n      <th>Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":8,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[8,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
-
----
-
-# Some Tips
-
-- When you use the "Infinite Moon Reader" addin in RStudio, your R session will be blocked by default. You can click the red button on the right of the console to stop serving the slides, or use the _daemonized_ mode so that it does not block your R session. To do the latter, you can set the option
-
-    ```r
-    options(servr.daemon = TRUE)
-    ```
-    
-    in your current R session, or in `~/.Rprofile` so that it is applied to all future R sessions. I do the latter by myself.
-    
-    To know more about the web server, see the [**servr**](https://github.com/yihui/servr) package.
-
---
-
-- Do not forget to try the `yolo` option of `xaringan::moon_reader`.
+e.g. 1 (THIS PRESENTATION)
 
     ```yaml
+    title: "Statistical Analysis and Organization"
+    subtitle: "and other important things about data management"
+    author: "Angela Freeman"
+    institute: "Ophir Lab"
+    date: "2020/6/25 (updated: 2020-07-06)"
     output:
       xaringan::moon_reader:
-        yolo: true
-    ```
-
----
-
-# Some Tips
-
-- Slides can be automatically played if you set the `autoplay` option under `nature`, e.g. go to the next slide every 30 seconds in a lightning talk:
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
+        lib_dir: libs
+        css: "rladies"
         nature:
-          autoplay: 30000
-    ```
-
---
-
-- A countdown timer can be added to every page of the slides using the `countdown` option under `nature`, e.g. if you want to spend one minute on every page when you give the talk, you can set:
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        nature:
-          countdown: 60000
-    ```
-
-    Then you will see a timer counting down from `01:00`, to `00:59`, `00:58`, ... When the time is out, the timer will continue but the time turns red.
-    
----
-
-# Some Tips
-
-- The title slide is created automatically by **xaringan**, but it is just another remark.js slide added before your other slides.
-
-    The title slide is set to `class: center, middle, inverse, title-slide` by default. You can change the classes applied to the title slide with the `titleSlideClass` option of `nature` (`title-slide` is always applied).
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        nature:
-          titleSlideClass: [top, left, inverse]
-    ```
-    
---
-
-- If you'd like to create your own title slide, disable **xaringan**'s title slide with the `seal = FALSE` option of `moon_reader`.
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        seal: false
-    ```
-
----
-
-# Some Tips
-
-- There are several ways to build incremental slides. See [this presentation](https://slides.yihui.org/xaringan/incremental.html) for examples.
-
-- The option `highlightLines: true` of `nature` will highlight code lines that start with `*`, or are wrapped in `{{ }}`, or have trailing comments `#&lt;&lt;`;
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        nature:
+          highlightStyle: github
           highlightLines: true
+          countIncrementalSlides: false
     ```
 
-    See examples on the next page.
-
 ---
-
-# Some Tips
-
-
-.pull-left[
-An example using a leading `*`:
-
-    ```r
-    if (TRUE) {
-    ** message("Very important!")
-    }
-    ```
-Output:
-```r
-if (TRUE) {
-* message("Very important!")
-}
-```
-
-This is invalid R code, so it is a plain fenced code block that is not executed.
-]
-
-.pull-right[
-An example using `{{}}`:
-
-````
-```{r tidy=FALSE}
-if (TRUE) {
-*{{ message("Very important!") }}
-}
-```
-````
-Output:
-
-```r
-if (TRUE) {
-* message("Very important!") 
-}
-```
-
-```
-## Very important!
-```
-
-It is valid R code so you can run it. Note that `{{}}` can wrap an R expression of multiple lines.
-]
-
----
-
-# Some Tips
-
-An example of using the trailing comment `#&lt;&lt;` to highlight lines:
-
-````markdown
-```{r tidy=FALSE}
-library(ggplot2)
-ggplot(mtcars) + 
-  aes(mpg, disp) + 
-  geom_point() +   #&lt;&lt;
-  geom_smooth()    #&lt;&lt;
-```
-````
-
-Output:
-
-
-```r
-library(ggplot2)
-ggplot(mtcars) + 
-  aes(mpg, disp) + 
-* geom_point() +
-* geom_smooth()
-```
-
----
-
-# Some Tips
-
-When you enable line-highlighting, you can also use the chunk option `highlight.output` to highlight specific lines of the text output from a code chunk. For example, `highlight.output = TRUE` means highlighting all lines, and `highlight.output = c(1, 3)` means highlighting the first and third line.
-
-````md
-```{r, highlight.output=c(1, 3)}
-head(iris)
-```
-````
-
-
-```
-*##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
-## 1          5.1         3.5          1.4         0.2  setosa
-*## 2          4.9         3.0          1.4         0.2  setosa
-## 3          4.7         3.2          1.3         0.2  setosa
-## 4          4.6         3.1          1.5         0.2  setosa
-## 5          5.0         3.6          1.4         0.2  setosa
-## 6          5.4         3.9          1.7         0.4  setosa
-```
-
-Question: what does `highlight.output = c(TRUE, FALSE)` mean? (Hint: think about R's recycling of vectors)
-
----
-
-# Some Tips
-
-- To make slides work offline, you need to download a copy of remark.js in advance, because **xaringan** uses the online version by default (see the help page `?xaringan::moon_reader`).
-
-- You can use `xaringan::summon_remark()` to download the latest or a specified version of remark.js. By default, it is downloaded to `libs/remark-latest.min.js`.
-
-- Then change the `chakra` option in YAML to point to this file, e.g.
+e.g. 2 (PDF DOCUMENT)
 
     ```yaml
-    output:
-      xaringan::moon_reader:
-        chakra: libs/remark-latest.min.js
+    ---
+    title: "Year end report"
+    author: "Angela Freeman"
+    date: "2020/12/21"
+    output: pdf_document
+    ---
+    ```
+---
+e.g. 3 (Template for PLOS from 'rticles')
+    ```
+    ---
+    title: Title of submission to PLOS journal
+    author:
+      - name: Alice Anonymous
+        email: alice@example.com
+        affiliation: Some Institute of Technology
+        corresponding: alice@example.com
+      - name: Bob Security
+        email: bob@example.com
+        affiliation: Another University
+    address:
+      - code: Some Institute of Technology
+        address: Department, Street, City, State, Zip
+      - code: Another University
+        address: Department, Street, City, State, Zip
+    abstract: |
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+  
+    author_summary: |
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+
+    bibliography: mybibfile.bib
+    output: rticles::plos_article
+    csl: plos.csl
+    ---
     ```
 
-- If you used Google fonts in slides (the default theme uses _Yanone Kaffeesatz_, _Droid Serif_, and _Source Code Pro_), they won't work offline unless you download or install them locally. The Heroku app [google-webfonts-helper](https://google-webfonts-helper.herokuapp.com/fonts) can help you download fonts and generate the necessary CSS.
-
 ---
 
-# Macros
+# You might think that with all this preamble it will be easier to just stick to your status quo.
 
-- remark.js [allows users to define custom macros](https://github.com/yihui/xaringan/issues/80) (JS functions) that can be applied to Markdown text using the syntax `![:macroName arg1, arg2, ...]` or `![:macroName arg1, arg2, ...](this)`. For example, before remark.js initializes the slides, you can define a macro named `scale`:
+## Let's watch this, then think about that internal dialogue again.
 
-    ```js
-    remark.macros.scale = function (percentage) {
-      var url = this;
-      return '&lt;img src="' + url + '" style="width: ' + percentage + '" /&gt;';
-    };
-    ```
+https://www.youtube.com/watch?v=s3JldKoA0zw
 
-    Then the Markdown text
-
-    ```markdown
-    ![:scale 50%](image.jpg)
-    ```
-
-    will be translated to
-    
-    ```html
-    &lt;img src="image.jpg" style="width: 50%" /&gt;
-    ```
 
 ---
+class: center, middle
+## If you find yourself frustrated at making graphs, editing graphs, then copy and pasting into word over and over and over, Rmarkdown is your answer.
 
-# Macros (continued)
-
-- To insert macros in **xaringan** slides, you can use the option `beforeInit` under the option `nature`, e.g.,
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        nature:
-          beforeInit: "macros.js"
-    ```
-
-    You save your remark.js macros in the file `macros.js`.
-
-- The `beforeInit` option can be used to insert arbitrary JS code before `remark.create()`. Inserting macros is just one of its possible applications.
-
----
-
-# CSS
-
-Among all options in `xaringan::moon_reader`, the most challenging but perhaps also the most rewarding one is `css`, because it allows you to customize the appearance of your slides using any CSS rules or hacks you know.
-
-You can see the default CSS file [here](https://github.com/yihui/xaringan/blob/master/inst/rmarkdown/templates/xaringan/resources/default.css). You can completely replace it with your own CSS files, or define new rules to override the default. See the help page `?xaringan::moon_reader` for more information.
-
----
-
-# CSS
-
-For example, suppose you want to change the font for code from the default "Source Code Pro" to "Ubuntu Mono". You can create a CSS file named, say, `ubuntu-mono.css`:
-
-```css
-@import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
-
-.remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
-```
-
-Then set the `css` option in the YAML metadata:
-
-```yaml
-output:
-  xaringan::moon_reader:
-    css: ["default", "ubuntu-mono.css"]
-```
-
-Here I assume `ubuntu-mono.css` is under the same directory as your Rmd.
-
-See [yihui/xaringan#83](https://github.com/yihui/xaringan/issues/83) for an example of using the [Fira Code](https://github.com/tonsky/FiraCode) font, which supports ligatures in program code.
-
----
-
-# Themes
-
-Don't want to learn CSS? Okay, you can use some user-contributed themes. A theme typically consists of two CSS files `foo.css` and `foo-fonts.css`, where `foo` is the theme name. Below are some existing themes:
-
-
-```r
-names(xaringan:::list_css())
-```
-
-```
-##  [1] "chocolate-fonts"  "chocolate"        "default-fonts"    "default"         
-##  [5] "duke-blue"        "fc-fonts"         "fc"               "hygge-duke"      
-##  [9] "hygge"            "ki-fonts"         "ki"               "kunoichi"        
-## [13] "lucy-fonts"       "lucy"             "metropolis-fonts" "metropolis"      
-## [17] "middlebury-fonts" "middlebury"       "ninjutsu"         "rladies-fonts"   
-## [21] "rladies"          "robot-fonts"      "robot"            "rutgers-fonts"   
-## [25] "rutgers"          "shinobi"          "tamu-fonts"       "tamu"            
-## [29] "uo-fonts"         "uo"               "uol-fonts"        "uol"
-```
-
----
-
-# Themes
-
-To use a theme, you can specify the `css` option as an array of CSS filenames (without the `.css` extensions), e.g.,
-
-```yaml
-output:
-  xaringan::moon_reader:
-    css: [default, metropolis, metropolis-fonts]
-```
-
-If you want to contribute a theme to **xaringan**, please read [this blog post](https://yihui.org/en/2017/10/xaringan-themes).
-
----
-class: inverse, middle, center
-background-image: url(https://upload.wikimedia.org/wikipedia/commons/3/39/Naruto_Shiki_Fujin.svg)
-background-size: contain
-
-# Naruto
-
----
-background-image: url(https://upload.wikimedia.org/wikipedia/commons/b/be/Sharingan_triple.svg)
-background-size: 100px
-background-position: 90% 8%
-
-# Sharingan
-
-The R package name **xaringan** was derived&lt;sup&gt;1&lt;/sup&gt; from **Sharingan**, a dōjutsu in the Japanese anime _Naruto_ with two abilities:
-
-- the "Eye of Insight"
-
-- the "Eye of Hypnotism"
-
-I think a presentation is basically a way to communicate insights to the audience, and a great presentation may even "hypnotize" the audience.&lt;sup&gt;2,3&lt;/sup&gt;
-
-.footnote[
-[1] In Chinese, the pronounciation of _X_ is _Sh_ /ʃ/ (as in _shrimp_). Now you should have a better idea of how to pronounce my last name _Xie_.
-
-[2] By comparison, bad presentations only put the audience to sleep.
-
-[3] Personally I find that setting background images for slides is a killer feature of remark.js. It is an effective way to bring visual impact into your presentations.
-]
-
----
-
-# Naruto terminology
-
-The **xaringan** package borrowed a few terms from Naruto, such as
-
-- [Sharingan](http://naruto.wikia.com/wiki/Sharingan) (写輪眼; the package name)
-
-- The [moon reader](http://naruto.wikia.com/wiki/Moon_Reader) (月読; an attractive R Markdown output format)
-
-- [Chakra](http://naruto.wikia.com/wiki/Chakra) (查克拉; the path to the remark.js library, which is the power to drive the presentation)
-
-- [Nature transformation](http://naruto.wikia.com/wiki/Nature_Transformation) (性質変化; transform the chakra by setting different options)
-
-- The [infinite moon reader](http://naruto.wikia.com/wiki/Infinite_Tsukuyomi) (無限月読; start a local web server to continuously serve your slides)
-
-- The [summoning technique](http://naruto.wikia.com/wiki/Summoning_Technique) (download remark.js from the web)
-
-You can click the links to know more about them if you want. The jutsu "Moon Reader" may seem a little evil, but that does not mean your slides are evil.
-
----
-
-class: center
-
-# Hand seals (印)
-
-Press `h` or `?` to see the possible ninjutsu you can use in remark.js.
-
-![](https://upload.wikimedia.org/wikipedia/commons/7/7e/Mudra-Naruto-KageBunshin.svg)
 
 ---
 
@@ -795,12 +790,8 @@ class: center, middle
 
 Slides created via the R package [**xaringan**](https://github.com/yihui/xaringan).
 
-The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.org/knitr), and [R Markdown](https://rmarkdown.rstudio.com).
 
 
-class: center, middle
-
-# xaringan
 
 ---
     </textarea>
