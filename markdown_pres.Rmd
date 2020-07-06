@@ -1,5 +1,5 @@
 ---
-title: "Rmarkdown"
+title: "Statistical Analysis and Organization"
 subtitle: "and other important things about data management"
 author: "Angela Freeman"
 institute: "Ophir Lab"
@@ -22,21 +22,6 @@ class: inverse, center, middle
 
 # The importance of reproducibility
 
----
-
-# Does this seem familiar?
-
-https://www.youtube.com/watch?v=s3JldKoA0zw
-
---
-
-## Why you should use Rmarkdown and Git
-
-- have a clear record of changes (**Version control with Git**)  
-
-- changes in your data or approach are automatically imported (**Reproducible with Rmarkdown**)  
-
-- but HOW? (**I will show you, in brief**)
 
 ---
 
@@ -47,6 +32,7 @@ https://www.youtube.com/watch?v=s3JldKoA0zw
 - Finding and fixing errors  
 
 - Maintaining consistency when personnel changes  
+
 
 ---
 class: inverse, center, middle
@@ -93,7 +79,9 @@ IN ONE FOLDER NAMED FOR THE PROJECT
 *You might also include in the readme where data are stored (videos, audio, project files, extrabrains) including how they are labelled. If your data are stored in a repository like the OSF, you won't need to have a data/ folder*
 
 ---
-
+class: center, middle
+## Consider using a backup and version control for stats code
+---
 
 # What is Git and Github?
 
@@ -104,7 +92,6 @@ IN ONE FOLDER NAMED FOR THE PROJECT
 <img src="https://github.blog/wp-content/uploads/2015/11/2b38e278-8c46-11e5-8a25-06aa80342ad1.png?fit=2680%2C1720" width="600" height = "400" />
 
 
----
 
 ## What is the benefit of using Git and Github compared to just saving my code files to box?
 
@@ -129,15 +116,208 @@ They can send their own pushes to your code and it can make a new branch, or you
 The best feature is that it's EASY. Literally just some clicky clicks in Rstudio.
 
 ---
+## A last word about keeping good records
+- Use a lab notebook, either paper or digital.
+    - digital can be searched, but if you are in a facility where using personal items is a no-no, keep paper records and transfer them later
+- Recommend keeping a table of contents at the start
+- You can refer then to protocols on a specific page with any chages
+- It really should be EASY to understand what was done
+- It will benefit you in the long run (and in the short run)
+- If you take paper notes, upload them to a repository (box or a server)
+    - a flash drive is an unnacceptable repository and should be treated as a ticking time bomb of data loss.
+
+
+---
+## Keeping good records summary:
+
+### Make sure your files are organized, well-labeled and backed up
+   - delete useless stuff on a regular schedule
+
+### Use a time-machine/version control (e.g. Box if you use word; Git/github for code)
+
+### Keep notes on everthing and make sure they are clear!
+---
 
 class: inverse, center, middle
 ## #2: Finding and Fixing Errors
 
 ---
+# First off, what is R?
 
-# Let's focus on R and Rmarkdown
+- a programming language that is FREE
 
-### What is Rmarkdown?
+- you can make fancy graphics
+
+- things in R are easily reproducible!!!!!!
+   - you are less likely to forget whether you ran an independent or paired t-test because you can see your script of what was run right in front of you.
+
+---
+#Example 1
+
+I can load data from a repository...
+```{r, include = FALSE}
+library(osfr)
+library(ggplot2)
+library(ggthemes)
+library(tidyr)
+library(broom)
+library(tidyverse)
+library(stargazer)
+```
+
+---
+
+```{r}
+## Example, pull code from open science framework
+
+osf_retrieve_node("https://osf.io/jfg7b") %>%
+    osf_ls_files() %>%
+    osf_download(conflicts= "overwrite")
+```
+
+---
+
+```{r}
+olpdata <-read.csv(file="OLPcombined2.csv")
+
+glimpse(olpdata)
+
+```
+---
+## As a reminder if you use IDs or trial/set/replicate numbers, make sure these are set as factors so that your models don't treat them as numbers. 
+```{r}
+## set ID as a factor using tidy and pipes
+data.tidy <- olpdata %>% mutate(
+              ID = (factor(ID)), DonorID = (factor(DonorID)), 
+              Sex = (factor(Sex)), Scent.sex = (factor(Scent.sex)),
+              Trial = (factor(Trial))
+)
+```
+
+The pipe %>% basically means 'and then do'
+
+---
+
+```{r}
+glimpse(data.tidy)
+```
+
+---
+
+class: center, middle
+What sorts of things should I look for in my data?
+
+---
+Look to make sure that your numbers make sense.
+
+```{r}
+plot(data.tidy$Side.Duration)
+```
+
+---
+Double check that your n's are what you expect. If you ran 14 females, you should have 14 females in your data.
+```{r}
+summary(data.tidy)
+```
+---
+I know that I ran 4 experiment types, and there are 5 lines of data each. So each animal should have 20 data points.
+
+```{r}
+#Check number from sex.
+280/20
+```
+
+---
+
+```{r}
+#summarize data and select discrimination trials
+sum_data <- data.tidy %>% filter(Trial==4) %>%
+    group_by(Sex, Experiment.Type, Scent.sex, 
+             Familiar.Novel, Individual) %>%
+    summarize(sniff_mean = mean(Sniff.Duration.MEAN),
+              side_mean = mean(Side.Duration.MEAN),
+              n_datapoints = n()) %>%
+  ungroup()
+
+sum_data
+```
+
+---
+Or, I can use the kable function to make a nice table.
+
+```{r}
+knitr::kable(sum_data, format = "html")
+```
+
+---
+And for the sake of presentation, I can even use a javascript widget to show all the data in cool ways
+```{r}
+DT::datatable(
+  sum_data,
+  fillContainer = FALSE, options = list(pageLength = 8)
+)
+```
+
+---
+## If you know that for example, your numbers should be positive values and they aren't = issues.
+
+- The easiest things to fix are errors in code/analysis.
+
+- The most difficult things/impossible things are human error when there are not good notes.
+    - e.g. was this animal female or male? two datasheets have differing information. How might you try to resolve this inconsistency? (Let's share!)
+
+---
+
+## Finding and Fixing errors summary:
+
+### Use reproducible analyses (R) so you can always go back and revisit EXACTLY what you did
+
+### 'Sit with your data' and check for outliers/inconsistencies in numbers/distributions
+
+### Keep notes on everthing and make sure they are clear!
+
+
+
+---
+
+class: inverse, center, middle
+## #3: Maintaining consistency
+### Most of us already use R and there are major benefits for this consistency
+
+---
+
+## What are the essential-to-knows for me, the new R user in the lab?
+
+- Learn to google your errors
+
+- If you get an error in your code check
+    - That your variables are the right type * class(x) *
+    - That you've spelled things correctly
+    - That you're in the right working directory * getwd() *
+    - Check the case (upper/lower)
+    
+- Don't reinvent the wheel, others in the lab can help you and **share scripts**
+
+- lme4 and emmeans packages will be your bffs and ggplot will be your nemesis.
+
+- consider starting with Rmarkdown off the hop, and check out the packages redoc, citr, and rticles.
+
+---
+## What are the essential-to-knows for me, a sometimes-user of R in the lab?
+
+- If you aren't using the dplyr package - check it out for data transforming 
+
+<img src="dplyr.PNG" width="300" height = "250" class="center" />
+
+- Don't be afraid to make functions of things you do ALL THE TIME (e.g. standard error function) and share
+- Don't be afriad to make changes to functions in packages if it helps you science! (e.g. Alex_theme())
+- If you want it to exist, it might already exist in a package. R programmers are often found on twitter.
+
+---
+
+# Let's focus a little on R and Rmarkdown
+
+### What is Rmarkdown? How could it help our work?
 
 - Rmarkdown is a way to put your Rcode and written document together
 
@@ -148,548 +328,82 @@ class: inverse, center, middle
 
 
 ---
+# How does markdown work?
+
+The 'yaml' (acronym: YAML ain't markup language) gives these parts of the workflow the information needed to make your final document when you 'knit'
+
+e.g. 1 (THIS PRESENTATION)
+
+    ```yaml
+    title: "Statistical Analysis and Organization"
+    subtitle: "and other important things about data management"
+    author: "Angela Freeman"
+    institute: "Ophir Lab"
+    date: "2020/6/25 (updated: `r Sys.Date()`)"
+    output:
+      xaringan::moon_reader:
+        lib_dir: libs
+        css: "rladies"
+        nature:
+          highlightStyle: github
+          highlightLines: true
+          countIncrementalSlides: false
+    ```
+
+---
+e.g. 2 (PDF DOCUMENT)
+
+    ```yaml
+    ---
+    title: "Year end report"
+    author: "Angela Freeman"
+    date: "2020/12/21"
+    output: pdf_document
+    ---
+    ```
+---
+e.g. 3 (Template for PLOS from 'rticles')
+    ```
+    ---
+    title: Title of submission to PLOS journal
+    author:
+      - name: Alice Anonymous
+        email: alice@example.com
+        affiliation: Some Institute of Technology
+        corresponding: alice@example.com
+      - name: Bob Security
+        email: bob@example.com
+        affiliation: Another University
+    address:
+      - code: Some Institute of Technology
+        address: Department, Street, City, State, Zip
+      - code: Another University
+        address: Department, Street, City, State, Zip
+    abstract: |
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+  
+    author_summary: |
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+
+    bibliography: mybibfile.bib
+    output: rticles::plos_article
+    csl: plos.csl
+    ---
+    ```
+
+---
+
+# You might think that with all this preamble it will be easier to just stick to your status quo.
+
+## Let's watch this, then think about that internal dialogue again.
+
+https://www.youtube.com/watch?v=s3JldKoA0zw
+
+
+---
 class: center, middle
 ## If you find yourself frustrated at making graphs, editing graphs, then copy and pasting into word over and over and over, Rmarkdown is your answer.
 
----
-
-
-
-background-image: url(`r xaringan:::karl`)
-background-position: 50% 50%
-class: center, bottom, inverse
-
-# You only live once!
-
----
-
-# Hello Ninja
-
-As a presentation ninja, you certainly should not be satisfied by the "Hello World" example. You need to understand more about two things:
-
-1. The [remark.js](https://remarkjs.com) library;
-
-1. The **xaringan** package;
-
-Basically **xaringan** injected the chakra of R Markdown (minus Pandoc) into **remark.js**. The slides are rendered by remark.js in the web browser, and the Markdown source needed by remark.js is generated from R Markdown (**knitr**).
-
----
-
-# remark.js
-
-You can see an introduction of remark.js from [its homepage](https://remarkjs.com). You should read the [remark.js Wiki](https://github.com/gnab/remark/wiki) at least once to know how to
-
-- create a new slide (Markdown syntax<sup>*</sup> and slide properties);
-
-- format a slide (e.g. text alignment);
-
-- configure the slideshow;
-
-- and use the presentation (keyboard shortcuts).
-
-It is important to be familiar with remark.js before you can understand the options in **xaringan**.
-
-.footnote[[*] It is different with Pandoc's Markdown! It is limited but should be enough for presentation purposes. Come on... You do not need a slide for the Table of Contents! Well, the Markdown support in remark.js [may be improved](https://github.com/gnab/remark/issues/142) in the future.]
-
----
-background-image: url(`r xaringan:::karl`)
-background-size: cover
-class: center, bottom, inverse
-
-# I was so happy to have discovered remark.js!
-
----
-class: inverse, middle, center
-
-# Using xaringan
-
----
-
-# xaringan
-
-Provides an R Markdown output format `xaringan::moon_reader` as a wrapper for remark.js, and you can use it in the YAML metadata, e.g.
-
-```yaml
----
-title: "A Cool Presentation"
-output:
-  xaringan::moon_reader:
-    yolo: true
-    nature:
-      autoplay: 30000
----
-```
-
-See the help page `?xaringan::moon_reader` for all possible options that you can use.
-
----
-
-# remark.js vs xaringan
-
-Some differences between using remark.js (left) and using **xaringan** (right):
-
-.pull-left[
-1. Start with a boilerplate HTML file;
-
-1. Plain Markdown;
-
-1. Write JavaScript to autoplay slides;
-
-1. Manually configure MathJax;
-
-1. Highlight code with `*`;
-
-1. Edit Markdown source and refresh browser to see updated slides;
-]
-
-.pull-right[
-1. Start with an R Markdown document;
-
-1. R Markdown (can embed R/other code chunks);
-
-1. Provide an option `autoplay`;
-
-1. MathJax just works;<sup>*</sup>
-
-1. Highlight code with `{{}}`;
-
-1. The RStudio addin "Infinite Moon Reader" automatically refreshes slides on changes;
-]
-
-.footnote[[*] Not really. See next page.]
-
----
-
-# Math Expressions
-
-You can write LaTeX math expressions inside a pair of dollar signs, e.g. &#36;\alpha+\beta$ renders $\alpha+\beta$. You can use the display style with double dollar signs:
-
-```
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-```
-
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-
-Limitations:
-
-1. The source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting `$$` must appear in the very beginning of a line, followed immediately by a non-space character, and the ending `$$` must be at the end of a line, led by a non-space character;
-
-1. There should not be spaces after the opening `$` or before the closing `$`.
-
-1. Math does not work on the title slide (see [#61](https://github.com/yihui/xaringan/issues/61) for a workaround).
-
----
-
-# R Code
-
-```{r comment='#'}
-# a boring regression
-fit = lm(dist ~ 1 + speed, data = cars)
-coef(summary(fit))
-dojutsu = c('地爆天星', '天照', '加具土命', '神威', '須佐能乎', '無限月読')
-grep('天', dojutsu, value = TRUE)
-```
-
----
-
-# R Plots
-
-```{r cars, fig.height=4, dev='svg'}
-par(mar = c(4, 4, 1, .1))
-plot(cars, pch = 19, col = 'darkgray', las = 1)
-abline(fit, lwd = 2)
-```
-
----
-
-# Tables
-
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
-
-```{r}
-knitr::kable(head(iris), format = 'html')
-```
-
----
-
-# HTML Widgets
-
-I have not thoroughly tested HTML widgets against **xaringan**. Some may work well, and some may not. It is a little tricky.
-
-Similarly, the Shiny mode (`runtime: shiny`) does not work. I might get these issues fixed in the future, but these are not of high priority to me. I never turn my presentation into a Shiny app. When I need to demonstrate more complicated examples, I just launch them separately. It is convenient to share slides with other people when they are plain HTML/JS applications.
-
-See the next page for two HTML widgets.
-
----
-
-```{r out.width='100%', fig.height=6, eval=require('leaflet')}
-library(leaflet)
-leaflet() %>% addTiles() %>% setView(-93.65, 42.0285, zoom = 17)
-```
-
----
-
-```{r eval=require('DT'), tidy=FALSE}
-DT::datatable(
-  head(iris, 10),
-  fillContainer = FALSE, options = list(pageLength = 8)
-)
-```
-
----
-
-# Some Tips
-
-- When you use the "Infinite Moon Reader" addin in RStudio, your R session will be blocked by default. You can click the red button on the right of the console to stop serving the slides, or use the _daemonized_ mode so that it does not block your R session. To do the latter, you can set the option
-
-    ```r
-    options(servr.daemon = TRUE)
-    ```
-    
-    in your current R session, or in `~/.Rprofile` so that it is applied to all future R sessions. I do the latter by myself.
-    
-    To know more about the web server, see the [**servr**](https://github.com/yihui/servr) package.
-
---
-
-- Do not forget to try the `yolo` option of `xaringan::moon_reader`.
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        yolo: true
-    ```
-
----
-
-# Some Tips
-
-- Slides can be automatically played if you set the `autoplay` option under `nature`, e.g. go to the next slide every 30 seconds in a lightning talk:
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        nature:
-          autoplay: 30000
-    ```
-
---
-
-- A countdown timer can be added to every page of the slides using the `countdown` option under `nature`, e.g. if you want to spend one minute on every page when you give the talk, you can set:
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        nature:
-          countdown: 60000
-    ```
-
-    Then you will see a timer counting down from `01:00`, to `00:59`, `00:58`, ... When the time is out, the timer will continue but the time turns red.
-    
----
-
-# Some Tips
-
-- The title slide is created automatically by **xaringan**, but it is just another remark.js slide added before your other slides.
-
-    The title slide is set to `class: center, middle, inverse, title-slide` by default. You can change the classes applied to the title slide with the `titleSlideClass` option of `nature` (`title-slide` is always applied).
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        nature:
-          titleSlideClass: [top, left, inverse]
-    ```
-    
---
-
-- If you'd like to create your own title slide, disable **xaringan**'s title slide with the `seal = FALSE` option of `moon_reader`.
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        seal: false
-    ```
-
----
-
-# Some Tips
-
-- There are several ways to build incremental slides. See [this presentation](https://slides.yihui.org/xaringan/incremental.html) for examples.
-
-- The option `highlightLines: true` of `nature` will highlight code lines that start with `*`, or are wrapped in `{{ }}`, or have trailing comments `#<<`;
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        nature:
-          highlightLines: true
-    ```
-
-    See examples on the next page.
-
----
-
-# Some Tips
-
-
-.pull-left[
-An example using a leading `*`:
-
-    ```r
-    if (TRUE) {
-    ** message("Very important!")
-    }
-    ```
-Output:
-```r
-if (TRUE) {
-* message("Very important!")
-}
-```
-
-This is invalid R code, so it is a plain fenced code block that is not executed.
-]
-
-.pull-right[
-An example using `{{}}`:
-
-````
-`r ''````{r tidy=FALSE}
-if (TRUE) {
-*{{ message("Very important!") }}
-}
-```
-````
-Output:
-```{r tidy=FALSE}
-if (TRUE) {
-{{ message("Very important!") }}
-}
-```
-
-It is valid R code so you can run it. Note that `{{}}` can wrap an R expression of multiple lines.
-]
-
----
-
-# Some Tips
-
-An example of using the trailing comment `#<<` to highlight lines:
-
-````markdown
-`r ''````{r tidy=FALSE}
-library(ggplot2)
-ggplot(mtcars) + 
-  aes(mpg, disp) + 
-  geom_point() +   #<<
-  geom_smooth()    #<<
-```
-````
-
-Output:
-
-```{r tidy=FALSE, eval=FALSE}
-library(ggplot2)
-ggplot(mtcars) + 
-  aes(mpg, disp) + 
-  geom_point() +   #<<
-  geom_smooth()    #<<
-```
-
----
-
-# Some Tips
-
-When you enable line-highlighting, you can also use the chunk option `highlight.output` to highlight specific lines of the text output from a code chunk. For example, `highlight.output = TRUE` means highlighting all lines, and `highlight.output = c(1, 3)` means highlighting the first and third line.
-
-````md
-`r ''````{r, highlight.output=c(1, 3)}
-head(iris)
-```
-````
-
-```{r, highlight.output=c(1, 3), echo=FALSE}
-head(iris)
-```
-
-Question: what does `highlight.output = c(TRUE, FALSE)` mean? (Hint: think about R's recycling of vectors)
-
----
-
-# Some Tips
-
-- To make slides work offline, you need to download a copy of remark.js in advance, because **xaringan** uses the online version by default (see the help page `?xaringan::moon_reader`).
-
-- You can use `xaringan::summon_remark()` to download the latest or a specified version of remark.js. By default, it is downloaded to `libs/remark-latest.min.js`.
-
-- Then change the `chakra` option in YAML to point to this file, e.g.
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        chakra: libs/remark-latest.min.js
-    ```
-
-- If you used Google fonts in slides (the default theme uses _Yanone Kaffeesatz_, _Droid Serif_, and _Source Code Pro_), they won't work offline unless you download or install them locally. The Heroku app [google-webfonts-helper](https://google-webfonts-helper.herokuapp.com/fonts) can help you download fonts and generate the necessary CSS.
-
----
-
-# Macros
-
-- remark.js [allows users to define custom macros](https://github.com/yihui/xaringan/issues/80) (JS functions) that can be applied to Markdown text using the syntax `![:macroName arg1, arg2, ...]` or `![:macroName arg1, arg2, ...](this)`. For example, before remark.js initializes the slides, you can define a macro named `scale`:
-
-    ```js
-    remark.macros.scale = function (percentage) {
-      var url = this;
-      return '<img src="' + url + '" style="width: ' + percentage + '" />';
-    };
-    ```
-
-    Then the Markdown text
-
-    ```markdown
-    ![:scale 50%](image.jpg)
-    ```
-
-    will be translated to
-    
-    ```html
-    <img src="image.jpg" style="width: 50%" />
-    ```
-
----
-
-# Macros (continued)
-
-- To insert macros in **xaringan** slides, you can use the option `beforeInit` under the option `nature`, e.g.,
-
-    ```yaml
-    output:
-      xaringan::moon_reader:
-        nature:
-          beforeInit: "macros.js"
-    ```
-
-    You save your remark.js macros in the file `macros.js`.
-
-- The `beforeInit` option can be used to insert arbitrary JS code before `remark.create()`. Inserting macros is just one of its possible applications.
-
----
-
-# CSS
-
-Among all options in `xaringan::moon_reader`, the most challenging but perhaps also the most rewarding one is `css`, because it allows you to customize the appearance of your slides using any CSS rules or hacks you know.
-
-You can see the default CSS file [here](https://github.com/yihui/xaringan/blob/master/inst/rmarkdown/templates/xaringan/resources/default.css). You can completely replace it with your own CSS files, or define new rules to override the default. See the help page `?xaringan::moon_reader` for more information.
-
----
-
-# CSS
-
-For example, suppose you want to change the font for code from the default "Source Code Pro" to "Ubuntu Mono". You can create a CSS file named, say, `ubuntu-mono.css`:
-
-```css
-@import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
-
-.remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
-```
-
-Then set the `css` option in the YAML metadata:
-
-```yaml
-output:
-  xaringan::moon_reader:
-    css: ["default", "ubuntu-mono.css"]
-```
-
-Here I assume `ubuntu-mono.css` is under the same directory as your Rmd.
-
-See [yihui/xaringan#83](https://github.com/yihui/xaringan/issues/83) for an example of using the [Fira Code](https://github.com/tonsky/FiraCode) font, which supports ligatures in program code.
-
----
-
-# Themes
-
-Don't want to learn CSS? Okay, you can use some user-contributed themes. A theme typically consists of two CSS files `foo.css` and `foo-fonts.css`, where `foo` is the theme name. Below are some existing themes:
-
-```{r}
-names(xaringan:::list_css())
-```
-
----
-
-# Themes
-
-To use a theme, you can specify the `css` option as an array of CSS filenames (without the `.css` extensions), e.g.,
-
-```yaml
-output:
-  xaringan::moon_reader:
-    css: [default, metropolis, metropolis-fonts]
-```
-
-If you want to contribute a theme to **xaringan**, please read [this blog post](https://yihui.org/en/2017/10/xaringan-themes).
-
----
-class: inverse, middle, center
-background-image: url(https://upload.wikimedia.org/wikipedia/commons/3/39/Naruto_Shiki_Fujin.svg)
-background-size: contain
-
-# Naruto
-
----
-background-image: url(https://upload.wikimedia.org/wikipedia/commons/b/be/Sharingan_triple.svg)
-background-size: 100px
-background-position: 90% 8%
-
-# Sharingan
-
-The R package name **xaringan** was derived<sup>1</sup> from **Sharingan**, a dōjutsu in the Japanese anime _Naruto_ with two abilities:
-
-- the "Eye of Insight"
-
-- the "Eye of Hypnotism"
-
-I think a presentation is basically a way to communicate insights to the audience, and a great presentation may even "hypnotize" the audience.<sup>2,3</sup>
-
-.footnote[
-[1] In Chinese, the pronounciation of _X_ is _Sh_ /ʃ/ (as in _shrimp_). Now you should have a better idea of how to pronounce my last name _Xie_.
-
-[2] By comparison, bad presentations only put the audience to sleep.
-
-[3] Personally I find that setting background images for slides is a killer feature of remark.js. It is an effective way to bring visual impact into your presentations.
-]
-
----
-
-# Naruto terminology
-
-The **xaringan** package borrowed a few terms from Naruto, such as
-
-- [Sharingan](http://naruto.wikia.com/wiki/Sharingan) (写輪眼; the package name)
-
-- The [moon reader](http://naruto.wikia.com/wiki/Moon_Reader) (月読; an attractive R Markdown output format)
-
-- [Chakra](http://naruto.wikia.com/wiki/Chakra) (查克拉; the path to the remark.js library, which is the power to drive the presentation)
-
-- [Nature transformation](http://naruto.wikia.com/wiki/Nature_Transformation) (性質変化; transform the chakra by setting different options)
-
-- The [infinite moon reader](http://naruto.wikia.com/wiki/Infinite_Tsukuyomi) (無限月読; start a local web server to continuously serve your slides)
-
-- The [summoning technique](http://naruto.wikia.com/wiki/Summoning_Technique) (download remark.js from the web)
-
-You can click the links to know more about them if you want. The jutsu "Moon Reader" may seem a little evil, but that does not mean your slides are evil.
-
----
-
-class: center
-
-# Hand seals (印)
-
-Press `h` or `?` to see the possible ninjutsu you can use in remark.js.
-
-![](https://upload.wikimedia.org/wikipedia/commons/7/7e/Mudra-Naruto-KageBunshin.svg)
 
 ---
 
@@ -699,11 +413,7 @@ class: center, middle
 
 Slides created via the R package [**xaringan**](https://github.com/yihui/xaringan).
 
-The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.org/knitr), and [R Markdown](https://rmarkdown.rstudio.com).
 
 
-class: center, middle
-
-# xaringan
 
 ---
